@@ -408,6 +408,8 @@ public class ProviderContractNegotiationManagerImpl extends AbstractContractNego
                 .policy(policy)
                 .build();
 
+        policyStore.save(policy); // This ensures that a new policy is not generated
+
         //TODO protocol-independent response type?
         dispatcherRegistry.send(Object.class, request, () -> null)
                 .whenComplete(onAgreementSent(negotiation.getId(), agreement));
