@@ -567,6 +567,9 @@ public class TransferProcessManagerImpl implements TransferProcessManager, Provi
 
         if (response.succeeded()) {
             process.transitionInProgressOrStreaming();
+            // TODO: Due to the way the checker is required for process lifecycle, we need to initiate the completion deprovisioning ourselves
+            process.transitionCompleted();
+            process.transitionDeprovisioning();
             updateTransferProcess(process, l -> l.preInProgress(process));
         } else {
             if (ResponseStatus.ERROR_RETRY == response.getFailure().status()) {
