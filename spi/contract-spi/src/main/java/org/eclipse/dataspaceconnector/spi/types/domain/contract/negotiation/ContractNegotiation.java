@@ -75,6 +75,7 @@ public class ContractNegotiation implements TraceCarrier {
     private int state = UNSAVED.code();
     private int stateCount;
     private long stateTimestamp;
+    public Long creationTimestamp = Instant.now().toEpochMilli();
     private String errorDetail;
     private ContractAgreement contractAgreement;
     private List<ContractOffer> contractOffers = new ArrayList<>();
@@ -356,7 +357,7 @@ public class ContractNegotiation implements TraceCarrier {
         return Builder.newInstance().id(id).correlationId(correlationId).counterPartyId(counterPartyId)
                 .counterPartyAddress(counterPartyAddress).protocol(protocol).type(type).state(state).stateCount(stateCount)
                 .stateTimestamp(stateTimestamp).errorDetail(errorDetail).contractAgreement(contractAgreement)
-                .contractOffers(contractOffers).traceContext(traceContext).build();
+                .contractOffers(contractOffers).traceContext(traceContext).creationTimestamp(creationTimestamp).build();
     }
 
     /**
@@ -454,6 +455,11 @@ public class ContractNegotiation implements TraceCarrier {
 
         public Builder stateTimestamp(long stateTimestamp) {
             negotiation.stateTimestamp = stateTimestamp;
+            return this;
+        }
+
+        public Builder creationTimestamp(long creationTimestamp) {
+            negotiation.creationTimestamp = creationTimestamp;
             return this;
         }
 

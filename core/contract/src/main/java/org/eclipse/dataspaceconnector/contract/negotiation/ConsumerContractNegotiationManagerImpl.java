@@ -303,9 +303,12 @@ public class ConsumerContractNegotiationManagerImpl extends AbstractContractNego
     private boolean processRequesting(ContractNegotiation negotiation) {
         var offer = negotiation.getLastContractOffer();
         var timeoutInSeconds = 60;
-        if (negotiation.getStateTimestamp() + timeoutInSeconds < Instant.now().getEpochSecond()) {
+        if (negotiation.creationTimestamp + timeoutInSeconds * 1000 < Instant.now().toEpochMilli()) {
             // Set to error after 60 seconds of failure, onRejectionSent should prevent further connection attempts
-            negotiation.transitionError(String.format("Request timed out after %d seconds", timeoutInSeconds));
+            var timeoutMessage = String.format("Request timed out after %d seconds", timeoutInSeconds);
+            monitor.info(timeoutMessage);
+            negotiation.transitionError(timeoutMessage);
+            negotiationStore.save(negotiation);
             return false;
         }
         sendOffer(offer, negotiation, ContractOfferRequest.Type.INITIAL)
